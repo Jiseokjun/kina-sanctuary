@@ -1,128 +1,44 @@
-# .github/workflows/sync-legion.yml
-# ─────────────────────────────────────────────────────────────
-# 키나 레기온 데이터 자동 동기화
-# - 매일 오전 9시 (KST) 자동 실행
-# - GitHub Actions 페이지에서 수동 실행 가능
-# ─────────────────────────────────────────────────────────────
-
 name: 🔄 키나 레기온 데이터 동기화
 
 on:
-  # ── 자동 스케줄 ─────────────────────────────────────────────
   schedule:
-    # 매일 00:00 UTC = 오전 09:00 KST
-    - cron: "0 0 * * *"
-
-    # 이틀에 한번 실행하려면 아래 주석 해제 (위 줄은 주석 처리)
-    # - cron: "0 0 */2 * *"
-
-  # ── 수동 트리거 (GitHub Actions 페이지에서 버튼 클릭) ───────
-  workflow_dispatch:
-    inputs:
-      legion:
-        description: "레기온명"
-        required: false
-        default: "키나"
-      server:
-        description: "서버명"
-        required: false
-        default: "바바룽"
-      faction:
-        description: "종족 (마족/천족)"
-        required: false
-        default: "마족"
-
-  # ── Push 트리거 (크롤러 파일 수정 시 자동 테스트) ───────────
-  push:
-    paths:
-      - "crawler/crawl-aion2tool.js"
+    - cron: '0 0,12 * * *' # 매일 2번 자동 실행
+  workflow_dispatch:      # 직접 버튼 눌러 실행 가능
 
 jobs:
-  crawl-and-update:
-    name: 레기온 데이터 크롤링
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
-      # ── 1. 코드 체크아웃 ─────────────────────────────────────
-      - name: 📥 코드 체크아웃
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 📂 코드 가져오기
+        uses: actions/checkout@v3
 
-      # ── 2. Node.js 설치 ──────────────────────────────────────
-      - name: ⚙️  Node.js 설정
-        uses: actions/setup-node@v4
+      - name: 🏗️ Node.js 설정
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
-          #cache: "npm"
-          #cache-dependency-path: crawler/package.json
+          node-version: '20'
 
-      # ── 3. 의존성 설치 ───────────────────────────────────────
-      - name: 📦 의존성 설치
-        working-directory: crawler
+      - name: 🇰🇷 한글 폰트 설치
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-nanum
+          sudo fc-cache -fv
+
+      - name: 📦 라이브러리 설치
         run: npm install
 
-      # ── 4. Puppeteer용 Chrome 설치 ───────────────────────────
-      - name: 🌐 Chrome 설치
-        run: |
-          npx puppeteer browsers install chrome
-        working-directory: crawler
-        continue-on-error: true   # Puppeteer 실패해도 Axios로 폴백
+      - name: 🤖 크롤링 실행
+        run: node crawl-aion2tool.js
 
-      # ── 5. 크롤링 실행 ───────────────────────────────────────
-      - name: 🔍 레기온 데이터 크롤링
-        working-directory: crawler
-        env:
-          LEGION_NAME: ${{ github.event.inputs.legion || '키나' }}
-          SERVER_NAME: ${{ github.event.inputs.server || '바바룽' }}
-          FACTION:     ${{ github.event.inputs.faction || '마족' }}
+      - name: 💾 데이터 저장 및 푸시
         run: |
-          node crawl-aion2tool.js \
-            --legion "$LEGION_NAME" \
-            --server "$SERVER_NAME" \
-            --faction "$FACTION"
-
-      # ── 6. 결과 확인 ─────────────────────────────────────────
-      - name: 📊 결과 미리보기
-        run: |
-          echo "=== 생성된 데이터 ==="
-          cat data/legion-data.json | python3 -c "
-          import json,sys
-          d = json.load(sys.stdin)
-          print(f\"레기온: {d['legionName']} ({d['server']} / {d['faction']})\")
-          print(f\"멤버 수: {d['memberCount']}명\")
-          print(f\"동기화: {d['lastSync']}\")
-          print('---')
-          for i,m in enumerate(d['members'][:5]):
-              print(f\"  {i+1}. {m['nick']} | {m['job']} | 아툴:{m['atul']:,} | 전투력:{m['power']:,}\")
-          if len(d['members']) > 5:
-              print(f\"  ... 외 {len(d['members'])-5}명\")
-          "
-
-      # ── 7. 변경사항 커밋 & 푸시 ─────────────────────────────
-      - name: 💾 데이터 커밋 & 푸시
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "Seokjun"
+          git config --local user.email "seokjun@example.com"
+          mkdir -p data
           git add data/legion-data.json
-
-          # 변경사항이 있을 때만 커밋
-          if git diff --staged --quiet; then
-            echo "📭 변경사항 없음 - 커밋 건너뜀"
+          if ! git diff --cached --quiet; then
+            git commit -m "🚀 데이터 업데이트: $(date +'%Y-%m-%d %H:%M')"
+            git push origin main
           else
-            MEMBER_COUNT=$(cat data/legion-data.json | python3 -c "import json,sys; print(json.load(sys.stdin)['memberCount'])")
-            git commit -m "🔄 레기온 데이터 동기화 - ${MEMBER_COUNT}명 [$(date +'%Y-%m-%d %H:%M KST' -d '+9 hours')]"
-            git push
-            echo "✅ 데이터 업데이트 완료"
+            echo "변경사항 없음"
           fi
-
-      # ── 8. 실패 알림 (선택사항: Slack/Discord 웹훅) ──────────
-      - name: 🚨 실패 알림
-        if: failure()
-        run: |
-          echo "크롤링 실패! GitHub Actions 로그를 확인하세요."
-          # Discord 웹훅 알림 예시 (DISCORD_WEBHOOK secret 설정 필요):
-          # curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
-          #   -H "Content-Type: application/json" \
-          #   -d '{"content":"❌ 키나 레기온 데이터 동기화 실패! GitHub Actions를 확인해주세요."}'
