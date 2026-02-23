@@ -22,7 +22,7 @@ async function sSet(key, val) {
 /* ═══════════════════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════════════════ */
-const ADMIN_CODE = "KINA2025";
+const ADMIN_CODE = "test1234";
 const MAX_SLOT   = 8;
 
 const JOB_ICONS = {
