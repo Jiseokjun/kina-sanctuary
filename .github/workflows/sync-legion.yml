@@ -28,6 +28,8 @@ jobs:
         run: |
           cd crawler
           npm install
+          env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true' # ⭐️ 핵심: 무거운 크롬 다운로드 건너뛰기
 
       - name: 🤖 크롤링 실행
         run: |
