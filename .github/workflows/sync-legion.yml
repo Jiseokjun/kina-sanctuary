@@ -28,7 +28,9 @@ jobs:
         run: npm ci
 
       - name: 🤖 크롤링 실행
-        run: node crawl-aion2tool.js
+        run: |
+          cd crawler
+          node crawl-aion2tool.js
 
       - name: 💾 데이터 저장 및 푸시
         run: |
