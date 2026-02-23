@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
    ⚠️  GITHUB_REPO를 본인 레포지토리로 변경하세요!
    예: "username/kina-sanctuary"
 ═══════════════════════════════════════════════════════════════ */
-const GITHUB_REPO   = "your-username/kina-sanctuary"; // ← 수정 필요
+const GITHUB_REPO   = "Jiseokjun/kina-sanctuary"; // ← 수정 필요
 const GITHUB_BRANCH = "main";
 const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/data/legion-data.json`;
 
