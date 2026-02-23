@@ -1,0 +1,19 @@
+{
+  "name": "kina-sanctuary-crawler",
+  "version": "1.0.0",
+  "description": "아이온2 키나 레기온 데이터 크롤러",
+  "main": "crawl-aion2tool.js",
+  "scripts": {
+    "crawl": "node crawl-aion2tool.js",
+    "crawl:kina": "node crawl-aion2tool.js --legion 키나 --server 바바룽 --faction 마족",
+    "test": "node crawl-aion2tool.js --legion 키나 --server 바바룽 --faction 마족"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0",
+    "puppeteer": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

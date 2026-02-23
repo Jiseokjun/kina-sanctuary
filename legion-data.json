@@ -1,0 +1,25 @@
+{
+  "legionName": "키나",
+  "server": "바바룽",
+  "faction": "마족",
+  "lastSync": "2026-02-23T09:00:00.000Z",
+  "crawlMethod": "puppeteer",
+  "memberCount": 15,
+  "members": [
+    { "nick": "키나전사",       "job": "검성",   "atul": 285000, "power": 18500 },
+    { "nick": "빛의수호",       "job": "수호성", "atul": 271000, "power": 17200 },
+    { "nick": "어둠의검",       "job": "살성",   "atul": 263000, "power": 16800 },
+    { "nick": "궁수왕",         "job": "궁성",   "atul": 258000, "power": 16300 },
+    { "nick": "마법사킹",       "job": "마도성", "atul": 242000, "power": 15700 },
+    { "nick": "자연의힘",       "job": "정령성", "atul": 238000, "power": 15200 },
+    { "nick": "치유천사",       "job": "치유성", "atul": 231000, "power": 14800 },
+    { "nick": "호법신",         "job": "호법성", "atul": 225000, "power": 14300 },
+    { "nick": "드래곤슬레이어", "job": "검성",   "atul": 219000, "power": 13900 },
+    { "nick": "아이온전사",     "job": "수호성", "atul": 207000, "power": 13200 },
+    { "nick": "별의기사",       "job": "궁성",   "atul": 198000, "power": 12700 },
+    { "nick": "폭풍의마법사",   "job": "마도성", "atul": 192000, "power": 12300 },
+    { "nick": "신성한치유사",   "job": "치유성", "atul": 184000, "power": 11800 },
+    { "nick": "철벽방어",       "job": "수호성", "atul": 176000, "power": 11300 },
+    { "nick": "그림자암살자",   "job": "살성",   "atul": 168000, "power": 10800 }
+  ]
+}
