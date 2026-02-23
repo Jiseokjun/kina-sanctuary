@@ -61,7 +61,7 @@ jobs:
       # ── 3. 의존성 설치 ───────────────────────────────────────
       - name: 📦 의존성 설치
         working-directory: crawler
-        run: npm ci
+        run: npm install
 
       # ── 4. Puppeteer용 Chrome 설치 ───────────────────────────
       - name: 🌐 Chrome 설치
