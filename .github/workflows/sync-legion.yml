@@ -25,7 +25,9 @@ jobs:
           sudo fc-cache -fv
 
       - name: 📦 라이브러리 설치
-        run: npm ci
+        run: |
+          cd crawler
+          npm install
 
       - name: 🤖 크롤링 실행
         run: |
